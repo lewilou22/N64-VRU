@@ -1,0 +1,27 @@
+BUILD_DIR = build-vrutest
+include n64-inst.mk
+include $(N64_INST)/include/n64.mk
+
+N64_ROM_TITLE = VRU Test
+N64_ROM_CATEGORY = N
+N64_ROM_SAVETYPE = none
+
+src = vru_test.c vru.c
+
+all: vrutest.z64
+
+vrutest.z64: N64_ROM_TITLE="VRU Diagnostics"
+vrutest.z64: $(BUILD_DIR)/vrutest.dfs
+
+$(BUILD_DIR)/vrutest.elf: $(src:%.c=$(BUILD_DIR)/%.o)
+
+$(BUILD_DIR)/vrutest.dfs: filesystem-vru/readme.txt
+	@echo "    [DFS] $@"
+	$(N64_MKDFS) "$@" filesystem-vru >/dev/null
+
+clean:
+	rm -rf $(BUILD_DIR) vrutest.z64
+
+-include $(wildcard $(BUILD_DIR)/*.d)
+
+.PHONY: all clean
